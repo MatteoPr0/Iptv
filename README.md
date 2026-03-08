@@ -6,7 +6,7 @@
 
 Questa app è ora predisposta anche come **PWA installabile** (Android/desktop via browser compatibile).
 
-## Run Locally
+**Prerequisites:** Node.js
 
 **Prerequisites:** Node.js
 

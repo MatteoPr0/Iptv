@@ -55,6 +55,8 @@ type Playlist = {
   id: string
   name: string
   credentials: Credentials
+  userId?: string
+  createdAt?: number
 }
 
 type XtreamUser = {
