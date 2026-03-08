@@ -262,6 +262,7 @@ export default function Home() {
 
   // Favorites State
   const [favorites, setFavorites] = useState<Favorite[]>(() => {
+    if (typeof window === 'undefined' || !window.localStorage) return []
     try {
       const saved = localStorage.getItem('iptv_favorites')
       return saved ? JSON.parse(saved) : []
@@ -277,6 +278,17 @@ export default function Home() {
   const [isAddingNew, setIsAddingNew] = useState(false)
   const [playlistName, setPlaylistName] = useState('')
   const [savePlaylist, setSavePlaylist] = useState(true)
+
+  // Sync favorites to localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      try {
+        localStorage.setItem('iptv_favorites', JSON.stringify(favorites))
+      } catch {
+        // Silent fail
+      }
+    }
+  }, [favorites])
 
   // Auth Listener
   useEffect(() => {
