@@ -1,4 +1,4 @@
-const CACHE_NAME = 'iptv-player-shell-v3';
+const CACHE_NAME = 'iptv-player-shell-v2';
 const BASE_PATH = new URL(self.registration.scope).pathname;
 const APP_SHELL = [
   BASE_PATH,
@@ -26,24 +26,10 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(request.url);
 
-  // Never cache proxy/API requests
-  if (url.pathname.includes('/proxy')) return;
-
-  // For SPA navigations use network-first to avoid stale blank pages
-  if (request.mode === 'navigate') {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          const responseToCache = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(`${BASE_PATH}index.html`, responseToCache));
-          return response;
-        })
-        .catch(() => caches.match(`${BASE_PATH}index.html`)),
-    );
+  if (url.pathname.includes('/proxy')) {
     return;
   }
 
-  // Static assets: cache-first + network fallback
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
       if (cachedResponse) return cachedResponse;
@@ -59,7 +45,12 @@ self.addEventListener('fetch', (event) => {
 
           return networkResponse;
         })
-        .catch(() => caches.match(BASE_PATH));
+        .catch(() => {
+          if (request.mode === 'navigate') {
+            return caches.match(`${BASE_PATH}index.html`);
+          }
+          return caches.match(BASE_PATH);
+        });
     }),
   );
 });
