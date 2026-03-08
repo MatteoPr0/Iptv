@@ -2,19 +2,36 @@
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# Run and deploy your AI Studio app
+# IPTV Player (Web + PWA)
 
-This contains everything you need to run your app locally.
-
-View your app in AI Studio: https://ai.studio/apps/0107d2ff-17c7-4b7a-9977-d018dd97b936
+Questa app è ora predisposta anche come **PWA installabile** (Android/desktop via browser compatibile).
 
 ## Run Locally
 
-**Prerequisites:**  Node.js
-
+**Prerequisites:** Node.js
 
 1. Install dependencies:
    `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
+2. Run the app:
    `npm run dev`
+3. Open:
+   `http://localhost:3000`
+
+## Build produzione
+
+1. Build frontend:
+   `npm run build`
+2. (Opzionale) Preview bundle:
+   `npm run preview`
+
+## Installazione su Android (PWA)
+
+1. Pubblica app e backend proxy in HTTPS.
+2. Apri l'app da Chrome Android.
+3. Menu browser → **Installa app** / **Aggiungi a schermata Home**.
+
+## Note PWA implementate
+
+- `manifest.webmanifest` con `display: standalone`.
+- `service worker` con cache della app shell.
+- Metadati `theme-color` e icona dedicata.
