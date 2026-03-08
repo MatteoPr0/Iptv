@@ -5,8 +5,7 @@ import './index.css';
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    const swUrl = new URL('sw.js', document.baseURI).pathname;
-    navigator.serviceWorker.register(swUrl).catch((error) => {
+    navigator.serviceWorker.register('/sw.js').catch((error) => {
       console.error('Service worker registration failed:', error);
     });
   });
