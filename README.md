@@ -41,28 +41,6 @@ Se in Settings → Pages vedi i pulsanti **Configure**, significa che non c'è a
 3. Vai in **Actions** e verifica che `Deploy to GitHub Pages` sia verde.
 4. Torna in **Settings → Pages**: comparirà l'URL (tipicamente `https://<user>.github.io/<repo>/`).
 
-
-### Pagina bianca su GitHub Pages (fix)
-
-Se il deploy è verde ma il sito è bianco, quasi sempre mancano le variabili Firebase in fase di build Pages.
-
-Imposta in **GitHub → Settings → Secrets and variables → Actions → Variables** almeno:
-
-- `VITE_FIREBASE_API_KEY`
-- `VITE_FIREBASE_AUTH_DOMAIN`
-- `VITE_FIREBASE_PROJECT_ID`
-- `VITE_FIREBASE_APP_ID`
-
-(opzionali: `VITE_FIREBASE_STORAGE_BUCKET`, `VITE_FIREBASE_MESSAGING_SENDER_ID`, `VITE_FIREBASE_MEASUREMENT_ID`, `VITE_FIREBASE_DATABASE_ID`)
-
-Poi rilancia il workflow `Deploy to GitHub Pages` da Actions.
-
-
-Se avevi già aperto una versione precedente e vedi ancora pagina bianca, svuota cache/service worker:
-
-- Chrome Android: Impostazioni sito → **Archiviazione** → **Cancella dati**
-- oppure apri in incognito / fai hard refresh
-
 ## Alert "Possible valid secrets detected"
 
 Se ricevi email da GitHub/Google Cloud su chiavi API esposte, significa che una chiave è finita nel repository (anche in commit passati).
