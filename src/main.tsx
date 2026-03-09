@@ -1,19 +1,13 @@
 import {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';
+import App from './App.tsx';
 import './index.css';
-import App from './App';
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    const swUrl = new URL('sw.js', document.baseURI).pathname;
-    navigator.serviceWorker.register(swUrl).catch((error) => {
-      console.error('Service worker registration failed:', error);
-    });
-  });
-}
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
   </StrictMode>,
 );

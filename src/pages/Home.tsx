@@ -1,6 +1,6 @@
 import Hls from 'hls.js'
 import React, { FormEvent, useEffect, useMemo, useRef, useState } from 'react'
-import { Play, Tv, LogOut, Search, CircleAlert as AlertCircle, Loader as Loader2, Film, Clapperboard, Heart, ChevronLeft, Calendar, Info, Trash2, Plus, X, Bubbles as Subtitles, AudioLines, Cast, ExternalLink, LogIn } from 'lucide-react'
+import { Play, Tv, LogOut, Search, AlertCircle, Loader2, Film, Clapperboard, Heart, ChevronLeft, Calendar, Info, Trash2, Plus, X, Subtitles, AudioLines, Cast, ExternalLink, LogIn } from 'lucide-react'
 import { auth, db } from '../firebase'
 import { signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, User } from 'firebase/auth'
 import { collection, doc, setDoc, deleteDoc, onSnapshot, query } from 'firebase/firestore'
@@ -25,16 +25,16 @@ function handleFirestoreError(error: unknown, operationType: OperationType, path
   const errInfo: FirestoreErrorInfo = {
     error: error instanceof Error ? error.message : String(error),
     authInfo: {
-      userId: auth.currentUser?.uid,
-      email: auth.currentUser?.email,
-      emailVerified: auth.currentUser?.emailVerified,
-      isAnonymous: auth.currentUser?.isAnonymous,
-      tenantId: auth.currentUser?.tenantId,
-      providerInfo: auth.currentUser?.providerData.map(provider => ({
+      userId: auth?.currentUser?.uid || '',
+      email: auth?.currentUser?.email || '',
+      emailVerified: auth?.currentUser?.emailVerified || false,
+      isAnonymous: auth?.currentUser?.isAnonymous || false,
+      tenantId: auth?.currentUser?.tenantId || '',
+      providerInfo: auth?.currentUser?.providerData.map(provider => ({
         providerId: provider.providerId,
-        displayName: provider.displayName,
-        email: provider.email,
-        photoUrl: provider.photoURL
+        displayName: provider.displayName || '',
+        email: provider.email || '',
+        photoUrl: provider.photoURL || ''
       })) || []
     },
     operationType,
@@ -262,7 +262,6 @@ export default function Home() {
 
   // Favorites State
   const [favorites, setFavorites] = useState<Favorite[]>(() => {
-    if (typeof window === 'undefined' || !window.localStorage) return []
     try {
       const saved = localStorage.getItem('iptv_favorites')
       return saved ? JSON.parse(saved) : []
@@ -279,19 +278,13 @@ export default function Home() {
   const [playlistName, setPlaylistName] = useState('')
   const [savePlaylist, setSavePlaylist] = useState(true)
 
-  // Sync favorites to localStorage
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      try {
-        localStorage.setItem('iptv_favorites', JSON.stringify(favorites))
-      } catch {
-        // Silent fail
-      }
-    }
-  }, [favorites])
-
   // Auth Listener
   useEffect(() => {
+    if (!auth) {
+      setIsAuthReady(true)
+      setError("Errore di configurazione Firebase. Controlla le impostazioni.")
+      return
+    }
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser)
       setIsAuthReady(true)
@@ -302,7 +295,7 @@ export default function Home() {
   // Sync Playlists from Firestore
   useEffect(() => {
     if (!isAuthReady) return
-    if (!user) {
+    if (!user || !db) {
       setPlaylists([])
       return
     }
@@ -322,6 +315,10 @@ export default function Home() {
   }, [user, isAuthReady])
 
   const handleGoogleLogin = async () => {
+    if (!auth) {
+      setError("Autenticazione non disponibile.")
+      return
+    }
     try {
       const provider = new GoogleAuthProvider()
       await signInWithPopup(auth, provider)
@@ -332,6 +329,7 @@ export default function Home() {
   }
 
   const handleLogout = async () => {
+    if (!auth) return
     try {
       await signOut(auth)
       setAppState('login')
@@ -510,7 +508,7 @@ export default function Home() {
 
       if (!authData.user_info || authData.user_info.auth !== 1) throw new Error('HTTP 401')
 
-      if (saveNew && user) {
+      if (saveNew && user && db) {
         const finalName = newName.trim() || creds.username
         const newPlaylist: Playlist = {
           id: Date.now().toString(),
@@ -556,7 +554,7 @@ export default function Home() {
   
   const deletePlaylist = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation()
-    if (!user) return
+    if (!user || !db) return
     try {
       await deleteDoc(doc(db, `users/${user.uid}/playlists`, id))
     } catch (error) {
@@ -628,7 +626,12 @@ export default function Home() {
               <p className="mt-2 text-sm text-zinc-400">Accedi ai tuoi contenuti preferiti</p>
             </div>
 
-            {user ? (
+            {!isAuthReady ? (
+              <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                <Loader2 size={32} className="animate-spin text-indigo-500" />
+                <p className="text-sm text-zinc-400">Verifica credenziali in corso...</p>
+              </div>
+            ) : user ? (
               playlists.length > 0 && !isAddingNew ? (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between mb-4">

@@ -6,7 +6,3 @@ coverage/
 *.log
 .env*
 !.env.example
-
-# Local Firebase config (deprecated in favor of .env.local)
-firebase-applet-config.json
-.env
