@@ -285,6 +285,7 @@ export default function Home() {
       setError("Errore di configurazione Firebase. Controlla le impostazioni.")
       return
     }
+
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser)
       setIsAuthReady(true)
@@ -322,9 +323,9 @@ export default function Home() {
     try {
       const provider = new GoogleAuthProvider()
       await signInWithPopup(auth, provider)
-    } catch (error) {
+    } catch (error: any) {
       console.error("Google Login Error:", error)
-      setError("Errore durante l'accesso con Google.")
+      setError("Errore durante l'accesso con Google: " + error.message)
     }
   }
 
@@ -898,7 +899,7 @@ export default function Home() {
               if (!isPlayerExpanded) setIsPlayerExpanded(true)
             }}
           >
-            <div className={`relative bg-black flex flex-col justify-center shrink-0 ${isPlayerExpanded ? 'w-full aspect-video lg:flex-1' : 'aspect-video'}`}>
+            <div className={`relative bg-black flex flex-col justify-center shrink-0 ${isPlayerExpanded ? 'w-full aspect-video lg:flex-1' : 'w-full aspect-video'}`}>
               {/* Close button for floating player */}
               {!isPlayerExpanded && selectedStream && (
                 <button 
@@ -924,7 +925,7 @@ export default function Home() {
                 controls={isPlayerExpanded} 
                 playsInline 
                 autoPlay 
-                className="h-full w-full object-contain" 
+                className="h-full w-full object-contain aspect-video" 
                 style={{ pointerEvents: isPlayerExpanded ? 'auto' : 'none' }}
               />
               
