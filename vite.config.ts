@@ -13,11 +13,12 @@ export default defineConfig(({mode}) => {
       tailwindcss(),
       VitePWA({
         registerType: 'autoUpdate',
-        includeAssets: ['icon.svg'],
+        injectRegister: 'auto',
+        includeAssets: ['icon.svg', 'icon-192.png', 'icon-512.png', 'screenshot-1.png', 'screenshot-2.png'],
         manifest: {
-          name: 'My Google AI Studio App',
-          short_name: 'AI Studio App',
-          description: 'An awesome app built with Google AI Studio',
+          name: 'IPTV Player',
+          short_name: 'IPTV',
+          description: 'A modern IPTV player',
           theme_color: '#ffffff',
           background_color: '#ffffff',
           display: 'standalone',
@@ -29,10 +30,34 @@ export default defineConfig(({mode}) => {
               type: 'image/svg+xml'
             },
             {
-              src: 'icon.svg',
-              sizes: '192x192 512x512',
-              type: 'image/svg+xml',
+              src: 'icon-192.png',
+              sizes: '192x192',
+              type: 'image/png'
+            },
+            {
+              src: 'icon-512.png',
+              sizes: '512x512',
+              type: 'image/png'
+            },
+            {
+              src: 'icon-512.png',
+              sizes: '512x512',
+              type: 'image/png',
               purpose: 'any maskable'
+            }
+          ],
+          screenshots: [
+            {
+              src: 'screenshot-1.png',
+              sizes: '1280x720',
+              type: 'image/png',
+              form_factor: 'wide'
+            },
+            {
+              src: 'screenshot-2.png',
+              sizes: '720x1280',
+              type: 'image/png',
+              form_factor: 'narrow'
             }
           ]
         }
